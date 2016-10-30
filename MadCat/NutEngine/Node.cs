@@ -66,23 +66,6 @@ namespace NutEngine
             /// то есть изменились Scale, Rotation и Position.
             transform.SetTransform(Scale, Rotation, Position); /// Пересчитать матрицу.
 
-            currentTransform = transform * currentTransform; /// Перейти в новую систему координат
-
-            var it = children.OrderBy(node => node.ZOrder).GetEnumerator();
-            bool next = it.MoveNext();
-
-            while (next && it.Current.ZOrder < 0) /// Узлы с ZOrder меньше нуля
-            {
-                it.Current.Visit(currentTransform, spriteBatch);
-                next = it.MoveNext();
-            }
-
-            if (this is IDrawable) /// Отрисовать сам узел при необходимости
-            {
-                var drawable = (IDrawable)this; /// Так даже на MSDN делают
-                drawable.Draw(currentTransform, spriteBatch);
-            }
-
             /// Перейти в новую систему координат
             currentTransform = transform * currentTransform;
 
