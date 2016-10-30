@@ -13,15 +13,15 @@ namespace NutEngine
             this.texture = texture;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(Transform2D currentTransform, SpriteBatch spriteBatch)
         {
             Vector2 position, scale;
             float rotation;
 
-            /// Достать из матрицы преобразования всю нужную информацию.
-            transform.Decompose(out scale, out rotation, out position);
+            /// Достать из матрицы преобразования всю нужную информацию
+            currentTransform.Decompose(out scale, out rotation, out position);
 
-            /// Отрисовать спрайт в позиции, с масштабом и поворотом.
+            /// Отрисовать спрайт в позиции, с масштабом и поворотом
             spriteBatch.Draw(
                   texture
                 , position

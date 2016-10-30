@@ -4,6 +4,6 @@ namespace NutEngine
 {
     interface IDrawable
     {
-        void Draw(SpriteBatch spriteBatch);
+        void Draw(Transform2D currentTransform, SpriteBatch spriteBatch);
     }
 }

@@ -56,7 +56,7 @@ namespace NutEngine
         /// затем сортируем детей по ZOrder и рисуем в таком порядке:
         /// Дети с ZOrder меньше 0 -> сам узел -> дети с ZOrder больше либо равно 0
         /// </summary>
-        public virtual void Visit(Transform2D parentTransform, SpriteBatch spriteBatch)
+        public virtual void Visit(Transform2D currentTransform, SpriteBatch spriteBatch)
         {
             if (!Visible)
             {
@@ -67,26 +67,26 @@ namespace NutEngine
             /// то есть изменились Scale, Rotation и Position.
             transform.SetTransform(Scale, Rotation, Position); /// Пересчитать матрицу.
 
-            transform.MultiplyBy(parentTransform); /// Перейти в систему координат родителя
+            currentTransform = transform * currentTransform; /// Перейти в новую систему координат
 
             var it = children.OrderBy(node => node.ZOrder).GetEnumerator();
             bool next = it.MoveNext();
 
             while (next && it.Current.ZOrder < 0) /// Узлы с ZOrder меньше нуля
             {
-                it.Current.Visit(transform, spriteBatch);
+                it.Current.Visit(currentTransform, spriteBatch);
                 next = it.MoveNext();
             }
 
             if (this is IDrawable) /// Отрисовать сам узел при необходимости
             {
                 var drawable = (IDrawable)this; /// Так даже на MSDN делают
-                drawable.Draw(spriteBatch);
+                drawable.Draw(currentTransform, spriteBatch);
             }
 
             while (next) /// Узлы с ZOrder больше либо равно нулю
             {
-                it.Current.Visit(transform, spriteBatch);
+                it.Current.Visit(currentTransform, spriteBatch);
                 next = it.MoveNext();
             }
         }
