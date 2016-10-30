@@ -16,7 +16,6 @@ namespace MadCat
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
             graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
-            graphics.ToggleFullScreen();
             graphics.ApplyChanges();
 
             Content.RootDirectory = "Content"; /// Папка со всеми ресурсами

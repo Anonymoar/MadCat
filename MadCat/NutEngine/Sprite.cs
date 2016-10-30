@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace NutEngine
 {
-    public class Sprite : Node
+    public class Sprite : Node, IDrawable
     {
         private Texture2D texture;
 
@@ -12,17 +13,15 @@ namespace NutEngine
             this.texture = texture;
         }
 
-        public override void Visit(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            base.Visit(spriteBatch); /// Применили все преобразования
-
             Vector2 position, scale;
             float rotation;
 
             /// Достать из матрицы преобразования всю нужную информацию.
             transform.Decompose(out scale, out rotation, out position);
 
-            /// Отрисовать спрайт в позиции с масштабом и поворотом.
+            /// Отрисовать спрайт в позиции, с масштабом и поворотом.
             spriteBatch.Draw(
                   texture
                 , position

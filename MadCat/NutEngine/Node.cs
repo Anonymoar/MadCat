@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Linq;
 
 namespace NutEngine
 {
@@ -35,6 +37,8 @@ namespace NutEngine
         public Vector2 Position { get; set; } /// Позиция
         public Vector2 Scale { get; set; } /// Масштаб
         public float Rotation { get; set; } /// Поворот
+        public int ZOrder { get; set; } /// Z индекс
+        public bool Visible { get; set; } /// Скрыт ли узел
 
         public Node()
         {
@@ -43,18 +47,47 @@ namespace NutEngine
             Position = Vector2.Zero;
             Scale = Vector2.One;
             Rotation = 0.0f;
+            ZOrder = 0;
+            Visible = true;
         }
 
-        public virtual void Visit(SpriteBatch spriteBatch)
+        /// <summary>
+        /// Применяем к узлу преобразования родителя,
+        /// затем сортируем детей по ZOrder и рисуем в таком порядке:
+        /// Дети с ZOrder меньше 0 -> сам узел -> дети с ZOrder больше либо равно 0
+        /// </summary>
+        public virtual void Visit(Transform2D parentTransform, SpriteBatch spriteBatch)
         {
-            /// Пересчитать матрицу.
+            if (!Visible)
+            {
+                return;
+            }
+
             /// TODO: Делать это только тогда, когда необходимо,
             /// то есть изменились Scale, Rotation и Position.
-            transform.SetTransform(Scale, Rotation, Position);
+            transform.SetTransform(Scale, Rotation, Position); /// Пересчитать матрицу.
 
-            /// Если есть родитель, то перейти в его систему координат
-            if (parent != null) {
-                transform.MultiplyBy(parent.transform);
+            transform.MultiplyBy(parentTransform); /// Перейти в систему координат родителя
+
+            var it = children.OrderBy(node => node.ZOrder).GetEnumerator();
+            bool next = it.MoveNext();
+
+            while (next && it.Current.ZOrder < 0) /// Узлы с ZOrder меньше нуля
+            {
+                it.Current.Visit(transform, spriteBatch);
+                next = it.MoveNext();
+            }
+
+            if (this is IDrawable) /// Отрисовать сам узел при необходимости
+            {
+                var drawable = (IDrawable)this; /// Так даже на MSDN делают
+                drawable.Draw(spriteBatch);
+            }
+
+            while (next) /// Узлы с ZOrder больше либо равно нулю
+            {
+                it.Current.Visit(transform, spriteBatch);
+                next = it.MoveNext();
             }
         }
 
@@ -73,7 +106,7 @@ namespace NutEngine
         public void RemoveChild(Node child)
         {
             child.parent = null;
-            Children.Remove(child);
+            children.Remove(child);
         }
     }
 }

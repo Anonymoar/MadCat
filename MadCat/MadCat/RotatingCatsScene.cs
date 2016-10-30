@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NutEngine;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MadCat
 {
@@ -55,6 +54,24 @@ namespace MadCat
 
             screenHeight = app.GraphicsDevice.PresentationParameters.BackBufferHeight;
             screenWidth = app.GraphicsDevice.PresentationParameters.BackBufferWidth;
+
+            /// Just testing
+            var cat1 = new RotatingCat();
+            cat1.velocity = new Vector2(300, 300);
+            cat1.sprite = new Sprite(catTexture);
+            cat1.sprite.Rotation = MathHelper.PiOver4;
+            cat1.sprite.Position = new Vector2(300, 300);
+
+            var cat2 = new RotatingCat();
+            cat2.sprite = new Sprite(catTexture);
+            cat2.sprite.Position = new Vector2(25, 25);
+            cat2.sprite.ZOrder = -10;
+
+            RootNode.AddChild(cat1.sprite);
+            cat1.sprite.AddChild(cat2.sprite);
+
+            cats.Add(cat1);
+            cats.Add(cat2);
         }
 
         public override void Update(float deltaTime)

@@ -40,21 +40,14 @@ namespace NutEngine
         /// </summary>
         public void Draw()
         {
-            App.GraphicsDevice.Clear(Color.Black); /// Залить все черным
-
-            var nodes = new Queue<Node>();
-            nodes.Enqueue(RootNode);
+            /// Залить все черным. Если сцены в стеке под текущей
+            /// могут отрисовываться, но надо заливку.
+            App.GraphicsDevice.Clear(Color.Black);
 
             Batcher.Begin();
 
-            while (nodes.Count != 0) {
-                var node = nodes.Dequeue();
-                node.Visit(Batcher);
-
-                foreach (var child in node.Children) {
-                    nodes.Enqueue(child);
-                }
-            }
+            Transform2D transform = new Transform2D();
+            RootNode.Visit(transform, Batcher); /// Начинаем обход в глубину
 
             Batcher.End();
         }

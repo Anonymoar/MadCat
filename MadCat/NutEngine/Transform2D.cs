@@ -15,7 +15,7 @@ namespace NutEngine
 
         public Transform2D()
         {
-            matrix = new Matrix();
+            matrix = Matrix.Identity;
         }
 
         public void SetTransform(Vector2 scale, float rotation, Vector2 position)
