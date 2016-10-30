@@ -13,7 +13,7 @@ namespace NutEngine
             this.texture = texture;
         }
 
-        public void Draw(Transform2D currentTransform, SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Transform2D currentTransform)
         {
             Vector2 position, scale;
             float rotation;

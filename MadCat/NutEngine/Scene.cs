@@ -35,19 +35,17 @@ namespace NutEngine
 
         /// <summary>
         /// Отрисовывает сцену.
-        /// Обходит граф сцены (дерево) поиском в ширину уровень 
-        /// за уровнем и посещает каждую его вершину.
+        /// Вызывает метод Visit у каждого узла,
+        /// начиная с корня (dfs).
         /// </summary>
         public void Draw()
         {
-            /// Залить все черным. Если сцены в стеке под текущей
-            /// могут отрисовываться, но надо заливку.
-            App.GraphicsDevice.Clear(Color.Black);
+            App.GraphicsDevice.Clear(Color.Black); /// Залить все черным
 
             Batcher.Begin();
 
             Transform2D transform = new Transform2D();
-            RootNode.Visit(transform, Batcher); /// Начинаем обход в глубину
+            RootNode.Visit(Batcher, transform);
 
             Batcher.End();
         }
