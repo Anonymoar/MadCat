@@ -6,6 +6,12 @@ namespace NutPacker
     {
         static void Main(string[] args)
         {
+            args = new string[3] {
+                  @"..\..\TestContent"
+                , @"..\..\TestContent"
+                , "true"
+            };
+
             /// In one wonderful day there will be the normal parameters parser, but not now :(
             if (args.Length != 3) {
                 Console.Error.WriteLine("Invalid path.");
