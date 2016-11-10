@@ -2,6 +2,7 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -25,6 +26,11 @@ namespace NutPacker
         /// </param>
         public static void Pack(string path, string outputImagePath, bool generateSourceFile = false)
         {
+            var ts = new Stopwatch();
+
+            Console.Write("Initialize: ");
+            ts.Start();
+
             var directory = new DirectoryInfo(path);
 
             /// Delete previous sprite.
@@ -35,8 +41,16 @@ namespace NutPacker
             /// Sprite.
             Bitmap outputImageBitmap;
 
+            Console.WriteLine($"OK ({ts.ElapsedMilliseconds}ms)");
+            Console.Write("Searching pictures: ");
+            ts.Restart();
+
             /// Get all ".jpg" and ".png" files in folder and all subfolders.
             var images = Walkthrough.GetFileNames(directory).ToArray();
+
+            Console.WriteLine($"OK ({ts.ElapsedMilliseconds}ms)");
+            Console.Write("Create sprite: ");
+            ts.Restart();
 
             /// Packer from sspack.
             var imagePacker = new sspack.ImagePacker();
@@ -54,6 +68,9 @@ namespace NutPacker
                 , out outputMap         /// Dictionary.
                 );
 
+            Console.WriteLine($"OK ({ts.ElapsedMilliseconds}ms)");
+            Console.Write("Generating CodeDom: ");
+            ts.Restart();
 
             var codeUnit = new CodeCompileUnit();
 
@@ -81,6 +98,10 @@ namespace NutPacker
                 }
             }
 
+            Console.WriteLine($"OK ({ts.ElapsedMilliseconds}ms)");
+            Console.Write("Compile: ");
+            ts.Restart();
+
             var cp = new CompilerParameters(
                   new string[] {
                         "sspack.exe"
@@ -101,11 +122,23 @@ namespace NutPacker
                 Console.Error.WriteLine(e.ToString());
             }
 
+            if (compile.Errors.Count == 0) {
+                Console.WriteLine($"OK ({ts.ElapsedMilliseconds}ms)");
+            }
+            else {
+                Console.WriteLine("FAILED");
+            }
+
             /// If no error - save the sprite.
             if (compile.Errors.Count == 0) {
+                Console.Write("Save sprite: ");
+                ts.Restart();
+
                 using (var streamWriter = new StreamWriter(Path.Combine(outputImagePath, directory.Name + ".png"))) {
                     outputImageBitmap.Save(streamWriter.BaseStream, System.Drawing.Imaging.ImageFormat.Png);
                 }
+
+                Console.WriteLine($"OK ({ts.ElapsedMilliseconds}ms)");
             }
         }
     }
